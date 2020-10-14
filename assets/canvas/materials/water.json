@@ -1,8 +1,0 @@
-{
-	"layers": [
-		{
-			"vertexSource": "canvas:shaders/material/leaves.vert",
-			"fragmentSource": "canvas:shaders/material/emissive_no_diffuse.frag"
-		}
-	]
-}
