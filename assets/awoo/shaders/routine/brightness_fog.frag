@@ -1,7 +1,3 @@
-#include frex:shaders/wip/api/world.glsl
-#include frex:shaders/wip/api/fragment.glsl
-#include frex:shaders/lib/math.glsl
-
 void awoo_brightnessFog(inout frx_FragmentData fragData, inout vec4 a, vec4 lx, float sfaox, float dix) {
 
 	a *= mix(lx, frx_emissiveColor(), fragData.emissivity);

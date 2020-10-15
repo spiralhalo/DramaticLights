@@ -1,7 +1,3 @@
-#include frex:shaders/wip/api/world.glsl
-#include frex:shaders/wip/api/fragment.glsl
-#include frex:shaders/lib/math.glsl
-
 void awoo_hazy(inout frx_FragmentData fragData) {
 
 	// sky light intensity
