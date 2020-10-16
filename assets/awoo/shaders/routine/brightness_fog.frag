@@ -3,6 +3,7 @@ void awoo_brightnessFog(inout frx_FragmentData fragData, inout vec4 a, vec4 lx, 
 	a *= mix(lx, frx_emissiveColor(), fragData.emissivity);
 
 	float bfx = frx_smootherstep(1.0, 0.0, frx_luminance(lx.rgb) * dix);
+	float dbfx = frx_smootherstep(0.5, 0.0, frx_luminance(lx.rgb) * dix * sfaox * sfaox);
 	float six = fragData.light.y * frx_ambientIntensity();
 	float ssa = fragData.light.y;
 
@@ -46,21 +47,24 @@ void awoo_brightnessFog(inout frx_FragmentData fragData, inout vec4 a, vec4 lx, 
 	float nfc = 0.8;
 	float nfx = frx_smootherstep(0.93, 1.0, six * (1-bfx)) * nix * nfc;
 
-	// brighten very dark or very bright areas
-	a.r *= (1+max(nfx*0.15,bfx*0.1));
-	a.g *= (1+max(nfx*0.15,bfx*0.1));
-	a.b *= (1+max(nfx*0.15,bfx*0.1));
+	// brighten ONLY very bright areas
+	a.r *= (1+nfx*0.15);
+	a.g *= (1+nfx*0.15);
+	a.b *= (1+nfx*0.15);
+	// a.r *= (1+max(nfx*0.15,bfx*0.1));
+	// a.g *= (1+max(nfx*0.15,bfx*0.1));
+	// a.b *= (1+max(nfx*0.15,bfx*0.1));
 
 	// lower saturation on very dark or very bright areas
-	a += vec4(max(nfx*0.2, bfx*0.03), max(nfx*0.2, bfx*0.03), max(nfx*0.2, bfx*0.04), 0);
+	a += vec4(max(nfx*0.2, bfx*0.02), max(nfx*0.2, bfx*0.02), max(nfx*0.2, bfx*0.04), 0);
 
-	// red fog, outdoors during dusk and dawn
+	// red shadow fog, outdoors during dusk and dawn
 	a.r *= (1+dfx*bfx*ssa*0.8);
 
-	// green fog, outdoors during the day
-	a.g *= (1+max(0,bfx*six-dfx*ssa)*0.6);
+	// green shadow fog, outdoors during the day
+	a.g *= (1+max(0,bfx*six-dfx*ssa)*0.8);
 
-	// blue fog, only indoor or at night
-	a.b *= (1+max(0,bfx/**(1-six)*/-dfx*ssa)*0.6);
+	// blue shadow fog, outdoors at all times, nerfed indoors
+	a.b *= (1+max(0,max(dbfx, bfx*six)/**(1-six)*/-dfx*ssa)*0.6);
 	
 }
