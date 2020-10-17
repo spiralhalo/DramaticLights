@@ -11,8 +11,8 @@
 #define DAY_AMBIENT_BLUE            2.0
 #define DARKNESS_BLUE               0.8
 
-vec4 rgbOneAlpha(float x){
-    return vec4(x, x, x, 1.0);
+vec4 rgbWithAlpha(float x, float a){
+    return vec4(x, x, x, a);
 }
 
 void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCalc, vec4 aoFact, float diffuse) {
@@ -42,8 +42,8 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
     float angularSunInfluence = fragData.light.y*frx_smootherstep(-1.0, 1.0, n.x * morningness + n.y * noonness + (-n.x * eveningness));
 
     float influencedDiffuse = max(diffuse,mix(diffuse, angularSunInfluence, 0.5));
-    vec4 brightnessColor = lightCalc * aoFact * rgbOneAlpha(influencedDiffuse);
-    vec4 brightnessColorNoAO = lightCalc * rgbOneAlpha(influencedDiffuse); // AO IS A BRO YOU DON'T MESS WITH IT >:(
+    vec4 brightnessColor = lightCalc * aoFact * rgbWithAlpha(influencedDiffuse, 1);
+    vec4 brightnessColorNoAO = lightCalc * rgbWithAlpha(influencedDiffuse, 1); // AO IS A BRO YOU DON'T MESS WITH IT >:(
     float luminanceNoAO = frx_luminance(brightnessColorNoAO.rgb);
     float ambientDarkness = frx_smootherstep(AMBIENT_DARKNESS_CUTOFF, 0.0, luminanceNoAO)*ambientSkyInfluence;
     float deepDarkness = frx_smootherstep(DEEP_DARKNESS_CUTOFF, 0.0, luminanceNoAO);
@@ -63,5 +63,5 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
     a *= vec4(1+sunExposure+twilightLumination, 1+sunExposure, 1+sunExposure, 1);
     a *= vec4(1+twilightAmbient*TWILIGHT_AMBIENT_RED, 1+dayAmbient*DAY_AMBIENT_GREEN, 1+dayAmbient*DAY_AMBIENT_BLUE, 1);
     a.b *= (1+deepDarkness*DARKNESS_BLUE*inverseAmbience);
-    a += rgbOneAlpha(angularSunInfluence*SUN_EXPOSURE_DESATURATION+deepDarkness*DEEP_DARKNESS_DESATURATION);
+    a += rgbWithAlpha(angularSunInfluence*SUN_EXPOSURE_DESATURATION+deepDarkness*DEEP_DARKNESS_DESATURATION, 0);
 }
