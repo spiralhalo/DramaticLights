@@ -73,4 +73,6 @@ void awoo_brightnessFog(inout frx_FragmentData fragData, inout vec4 a, vec4 lx, 
 	// blue shadow fog, outdoors at all times, nerfed indoors
 	a.b *= (1+max(0,max(dbfx, bfx*six)/**(1-six)*/-dfx*ssa)*0.6);
 	
+	a *= aoFact;
+	a *= vec4(diffuse, diffuse, diffuse, 1.0);
 }

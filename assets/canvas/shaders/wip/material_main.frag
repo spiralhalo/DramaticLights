@@ -97,15 +97,21 @@ void main() {
 
 	/****** awoo edit *****/ 
 	//a *= mix(light(fragData), frx_emissiveColor(), fragData.emissivity);
-	#if AO_SHADING_MODE != AO_MODE_NONE && DIFFUSE_SHADING_MODE == DIFFUSE_MODE_NORMAL
-		awoo_brightnessFog(fragData, a, light(fragData), aoFactor(fragData.light), _cvv_diffuse);
-	#elif AO_SHADING_MODE != AO_MODE_NONE && DIFFUSE_SHADING_MODE != DIFFUSE_MODE_NORMAL
-		awoo_brightnessFog(fragData, a, light(fragData), aoFactor(fragData.light), 1);
+	#if AO_SHADING_MODE != AO_MODE_NONE
+	vec4 calcAO = fragData.ao?(aoFactor(fragData.light)):vec4(1,1,1,1);
 	#else
-		awoo_brightnessFog(fragData, a, light(fragData), 1, 1);
+	vec4 calcAO = vec4(1,1,1,1);
 	#endif
+	
+	#if DIFFUSE_SHADING_MODE == DIFFUSE_MODE_NORMAL
+	float calcDiff = fragData.diffuse?(_cvv_diffuse + (1.0 - _cvv_diffuse) * fragData.emissivity):1;
+	#else
+	float calcDiff = 1;
+	#endif
+	
+	awoo_brightnessFog(fragData, a, light(fragData), calcAO, calcDiff);
 	/****** END awoo edit *****/ 
-
+/*
 #if AO_SHADING_MODE != AO_MODE_NONE
 	if (fragData.ao) {
 		a *= aoFactor(fragData.light);
@@ -119,7 +125,7 @@ void main() {
 		a *= vec4(df, df, df, 1.0);
 	}
 #endif
-
+*/
 	// PERF: varyings better here?
 	if (_cv_getFlag(_CV_FLAG_FLASH_OVERLAY) == 1.0) {
 		a = a * 0.25 + 0.75;
