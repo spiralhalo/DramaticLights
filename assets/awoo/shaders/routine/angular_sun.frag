@@ -39,7 +39,7 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
     float morningness = (time>0.92)?(frx_smootherstep(0.92, 1.0, time)):frx_smootherstep(0.25, 0.0, time);
     float eveningness = (time>0.5)?(frx_smootherstep(0.58, 0.5, time)):frx_smootherstep(0.25, 0.5, time);
     // TODO: deal with z faces and diagonal faces as well
-    float angularSunInfluence = fragData.light.y*frx_smootherstep(-1.0, 1.0, n.x * morningness + n.y * noonness + (-n.x * eveningness));
+    float angularSunInfluence = fragData.light.y*frx_smootherstep(-1.0, 1.0, n.x * morningness + n.y * noonness * frx_ambientIntensity() + (-n.x * eveningness));
 
     float influencedDiffuse = max(diffuse,mix(diffuse, angularSunInfluence, 0.5));
     vec4 brightnessColor = lightCalc * aoFact * rgbWithAlpha(influencedDiffuse, 1);
