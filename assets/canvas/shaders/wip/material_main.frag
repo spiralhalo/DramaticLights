@@ -97,18 +97,13 @@ void main() {
 
 	/****** awoo edit *****/ 
 	//a *= mix(light(fragData), frx_emissiveColor(), fragData.emissivity);
-	vec4 lx = light(fragData);
-
-	float sfaox = 1; // softened ao factor
-	if (fragData.ao) {
-		sfaox = (frx_luminance(aoFactor(fragData.light).rgb)+1)/2;
-	}
-
-	float dix = 1;
-	if (fragData.diffuse) {
-		dix = _cvv_diffuse + (1.0 - _cvv_diffuse) * fragData.emissivity;
-	}
-	awoo_brightnessFog(fragData, a, lx, sfaox, dix);
+	#if AO_SHADING_MODE != AO_MODE_NONE && DIFFUSE_SHADING_MODE == DIFFUSE_MODE_NORMAL
+		awoo_brightnessFog(fragData, a, light(fragData), aoFactor(fragData.light), _cvv_diffuse);
+	#elif AO_SHADING_MODE != AO_MODE_NONE && DIFFUSE_SHADING_MODE != DIFFUSE_MODE_NORMAL
+		awoo_brightnessFog(fragData, a, light(fragData), aoFactor(fragData.light), 1);
+	#else
+		awoo_brightnessFog(fragData, a, light(fragData), 1, 1);
+	#endif
 	/****** END awoo edit *****/ 
 
 #if AO_SHADING_MODE != AO_MODE_NONE

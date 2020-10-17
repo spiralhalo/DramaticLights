@@ -1,9 +1,15 @@
-void awoo_brightnessFog(inout frx_FragmentData fragData, inout vec4 a, vec4 lx, float sfaox, float dix) {
-
+void awoo_brightnessFog(inout frx_FragmentData fragData, inout vec4 a, vec4 lx, vec4 aoFact, float diffuse) {
+	
 	a *= mix(lx, frx_emissiveColor(), fragData.emissivity);
+	//don't use AO for now because entity blocks don't have them (i.e. sign, maybe beds, etc)
+	//float sfaox = fragData.ao?((frx_luminance(aoFact.rgb * aoFact.a)+1)/2):1;
+	
+	// entity blocks DO have Diffuse but they have different values than terrain blocks >:(
+	// note to self: grass and ladders don't have diffuse at all.. interesting.. maybe all "flat" objects dont have diffuse
+	float dix = fragData.diffuse?(diffuse + (1.0 - diffuse) * fragData.emissivity):1;
 
 	float bfx = frx_smootherstep(1.0, 0.0, frx_luminance(lx.rgb) * dix);
-	float dbfx = frx_smootherstep(0.5, 0.0, frx_luminance(lx.rgb) * dix * sfaox * sfaox);
+	float dbfx = frx_smootherstep(0.5, 0.0, frx_luminance(lx.rgb) * dix);
 	float six = fragData.light.y * frx_ambientIntensity();
 	float ssa = fragData.light.y;
 
