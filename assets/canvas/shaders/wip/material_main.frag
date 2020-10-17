@@ -16,7 +16,7 @@
 
 /****** awoo edit *****/
 #include awoo:shaders/routine/hazy.frag
-#include awoo:shaders/routine/brightness_fog.frag
+#include awoo:shaders/routine/angular_sun.frag
 /****** END awoo edit *****/ 
 
 /******************************************************
@@ -110,7 +110,7 @@ void main() {
 	float calcDiff = 1;
 	#endif
 	
-	awoo_brightnessFog(fragData, a, lightCalc, calcAO, calcDiff);
+	awoo_angularSun(fragData, a, lightCalc, calcAO, calcDiff);
 	//a *= mix(light(fragData), frx_emissiveColor(), fragData.emissivity);
 /*
 #if AO_SHADING_MODE != AO_MODE_NONE
