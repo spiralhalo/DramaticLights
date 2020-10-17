@@ -91,7 +91,8 @@ void main() {
 	if (a.a >= 0.5 || _cv_getFlag(_CV_FLAG_CUTOUT) != 1.0) {
 	
 		/****** awoo edit *****/ 
-		//a *= mix(light(fragData), frx_emissiveColor(), fragData.emissivity);
+		vec4 lightCalc = mix(light(fragData), frx_emissiveColor(), fragData.emissivity);
+
 		#if AO_SHADING_MODE != AO_MODE_NONE && defined(CONTEXT_IS_BLOCK)
 		vec4 calcAO = fragData.ao?(aoFactor(fragData.light)):vec4(1,1,1,1);
 		#else
@@ -104,7 +105,7 @@ void main() {
 		float calcDiff = 1;
 		#endif
 		
-		awoo_brightnessFog(fragData, a, light(fragData), calcAO, calcDiff);
+		awoo_brightnessFog(fragData, a, lightCalc, calcAO, calcDiff);
 
 		/*#if AO_SHADING_MODE != AO_MODE_NONE && defined(CONTEXT_IS_BLOCK)
 		if (fragData.ao) {
