@@ -47,7 +47,7 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         //vec4 darkenColor = lightCalc * aoFact * rgbWithAlpha(influencedDiffuse, 1);
         darkenColorNoAO = lightCalc * rgbWithAlpha(influencedDiffuse, 1); // AO IS A BRO YOU DON'T MESS WITH IT >:(
         float luminanceNoAO = frx_luminance(darkenColorNoAO.rgb);
-        float ambientDarkness = sqrt(frx_smootherstep(AMBIENT_DARKNESS_CUTOFF, 0.0, luminanceNoAO)*ambientSkyInfluence);
+        float ambientDarkness = frx_smootherstep(AMBIENT_DARKNESS_CUTOFF, 0.0, luminanceNoAO)*ambientSkyInfluence;
         //float deepDarkness = frx_smootherstep(DEEP_DARKNESS_CUTOFF, 0.0, luminanceNoAO);
         //float inverseAmbience = frx_smootherstep(1.0, 0.0, ambientSkyInfluence);
         
@@ -57,7 +57,7 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         float twilightAmbient = twilightness*ambientDarkness;
         
         float dayness = (time < 0.5)?(1-twilightness):0;
-        float dayAmbient = dayness*ambientDarkness;
+        float dayAmbient = dayness*sqrt(ambientDarkness);
         float nightAmbient = (1-dayness)*ambientDarkness/frx_ambientIntensity();
         
         float sunExposure = 1-ANGULAR_DELUMINATION+angularSunInfluence*ANGULAR_DELUMINATION+angularSunInfluence*SUN_EXPOSURE_POWER;
