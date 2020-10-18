@@ -1,5 +1,8 @@
 #define ANGULAR_DELUMINATION        0.2
 #define SUN_EXPOSURE_POWER          0.1
+#define SUN_HAZE_CUTOFF             0.9
+#define NOON_HAZE_EMISSIVITY        0.05
+#define TWILIGHT_HAZE_EMISSIVITY    0.8
 #define MORNING_TWILIGHT            0.5
 #define AMBIENT_DARKNESS_CUTOFF     0.8
 #define DEEP_DARKNESS_CUTOFF        0.5
@@ -58,6 +61,8 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         float nightAmbient = (1-dayness)*ambientDarkness/frx_ambientIntensity();
         
         float sunExposure = 1-ANGULAR_DELUMINATION+angularSunInfluence*ANGULAR_DELUMINATION+angularSunInfluence*SUN_EXPOSURE_POWER;
+        float sunHaze = frx_smootherstep(SUN_HAZE_CUTOFF, 1.0, angularSunInfluence);
+        float sunHazeEmissivity = sunHaze * noonness * NOON_HAZE_EMISSIVITY + sunHaze * twilightness * TWILIGHT_HAZE_EMISSIVITY;
         vec4 brightenColor = rgbWithAlpha(sunExposure, 1);
 
         darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, SUN_COLOR, angularSunInfluence * frx_ambientIntensity()), 1);
@@ -68,6 +73,7 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         brightenColor = vec4(mix(brightenColor.rgb, TWILIGHT_COLOR, twilightLumination), 1);
 
         a *= brightenColor;
+        fragData.emissivity = max(fragData.emissivity, sunHazeEmissivity);
     } else {
         darkenColorNoAO = lightCalc * rgbWithAlpha(diffuse, 1);
     }
