@@ -1,16 +1,8 @@
 #define ANGULAR_DELUMINATION        0.2
 #define SUN_EXPOSURE_POWER          0.1
-//#define SUN_EXPOSURE_DESATURATION   0.1
-//#define TWILIGHT_LUMINATION         0.2
 #define MORNING_TWILIGHT            0.5
 #define AMBIENT_DARKNESS_CUTOFF     0.8
 #define DEEP_DARKNESS_CUTOFF        0.5
-//#define DEEP_DARKNESS_DESATURATION  0.02
-
-//#define TWILIGHT_AMBIENT_RED        1.0
-//#define DAY_AMBIENT_GREEN           1.5
-//#define DAY_AMBIENT_BLUE            2.0
-//#define DARKNESS_BLUE               0.8
 
 #define SUN_COLOR                   vec3(1.0, 1.0, 1.0)
 #define TWILIGHT_COLOR              vec3(1.0, 0.74, 0.18)
@@ -22,32 +14,31 @@ vec4 rgbWithAlpha(float x, float a){
 }
 
 void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCalc, vec4 aoFact, float diffuse) {
-	
-    /*vec3 normalColor = fragData.vertexNormal;
-    if(normalColor.r < 0){
-        normalColor = vec3(1,0,1);
-    } else if(normalColor.g < 0){
-        normalColor = vec3(1,1,0);
-    } else if(normalColor.b < 0){
-        normalColor = vec3(0,1,1);
-    }
-    a *= vec4(normalColor, 1);*/
-
-    //TO TASTE
-    //float sunExposurePower = 0.1;
-    //float sunExposureDesaturation = 0.1;
-    //float deepDarkness
 
     vec4 darkenColorNoAO;
     if(frx_worldHasSkylight()){
         float ambientSkyInfluence = fragData.light.y * frx_ambientIntensity();
         vec3 n = fragData.vertexNormal;
+        #ifdef EXPERIMENTAL_PIPELINE
+        n = n*frx_normalModelMatrix();
+        #endif
+        //project to +x axis
+        float east = dot(n, vec3(1,0,0));
+        //project to +y axis
+        float top = dot(n, vec3(0,1,0));
+        //project to -x axis
+        float west = dot(n, vec3(-1,0,0));
+        /*float south = dot(n, vec3(0,0,1));
+        float north = dot(n, vec3(0,0,-1));
+        float bottom = dot(n, vec3(0,-1,0));
+        //color the corresponding face
+        a *= vec4(east+bottom+north, top+north+west, west+bottom+south, 1);*/
         float time = frx_worldTime();
         float noonness = (time<0.25)?(frx_smootherstep(0.0, 0.25, time)):(frx_smootherstep(0.5, 0.25, time));
         float morningness = (time>0.92)?(frx_smootherstep(0.92, 1.0, time)):frx_smootherstep(0.25, 0.0, time);
         float eveningness = (time>0.5)?(frx_smootherstep(0.58, 0.5, time)):frx_smootherstep(0.25, 0.5, time);
-        // TODO: deal with z faces and diagonal faces as well
-        float angularSunInfluence = fragData.light.y*frx_smootherstep(-1.0, 1.0, n.x * morningness + n.y * noonness * frx_ambientIntensity() + (-n.x * eveningness));
+        // TODO: deal with z axes? (annual sun "movement")
+        float angularSunInfluence = fragData.light.y*frx_smootherstep(-1.0, 1.0, east * morningness + top * noonness * frx_ambientIntensity() + west * eveningness);
 
         float influencedDiffuse = max(diffuse,mix(diffuse, angularSunInfluence, 0.5));
         //vec4 darkenColor = lightCalc * aoFact * rgbWithAlpha(influencedDiffuse, 1);
@@ -82,8 +73,4 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
     }
 	a *= darkenColorNoAO;
     a *= aoFact;
-    //a *= vec4(1+sunExposure+twilightLumination, 1+sunExposure, 1+sunExposure, 1);
-    //a *= vec4(1+twilightAmbient*TWILIGHT_AMBIENT_RED, 1+dayAmbient*DAY_AMBIENT_GREEN, 1+dayAmbient*DAY_AMBIENT_BLUE, 1);
-    //a.b *= (1+deepDarkness*DARKNESS_BLUE*inverseAmbience);
-    //a += rgbWithAlpha(angularSunInfluence*SUN_EXPOSURE_DESATURATION+deepDarkness*DEEP_DARKNESS_DESATURATION, 0);
 }
