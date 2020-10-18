@@ -38,43 +38,48 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
     //float sunExposureDesaturation = 0.1;
     //float deepDarkness
 
-    float ambientSkyInfluence = fragData.light.y * frx_ambientIntensity();
-    vec3 n = fragData.vertexNormal;
-    float time = frx_worldTime();
-    float noonness = (time<0.25)?(frx_smootherstep(0.0, 0.25, time)):(frx_smootherstep(0.5, 0.25, time));
-    float morningness = (time>0.92)?(frx_smootherstep(0.92, 1.0, time)):frx_smootherstep(0.25, 0.0, time);
-    float eveningness = (time>0.5)?(frx_smootherstep(0.58, 0.5, time)):frx_smootherstep(0.25, 0.5, time);
-    // TODO: deal with z faces and diagonal faces as well
-    float angularSunInfluence = fragData.light.y*frx_smootherstep(-1.0, 1.0, n.x * morningness + n.y * noonness * frx_ambientIntensity() + (-n.x * eveningness));
+    vec4 darkenColorNoAO;
+    if(frx_worldHasSkylight()){
+        float ambientSkyInfluence = fragData.light.y * frx_ambientIntensity();
+        vec3 n = fragData.vertexNormal;
+        float time = frx_worldTime();
+        float noonness = (time<0.25)?(frx_smootherstep(0.0, 0.25, time)):(frx_smootherstep(0.5, 0.25, time));
+        float morningness = (time>0.92)?(frx_smootherstep(0.92, 1.0, time)):frx_smootherstep(0.25, 0.0, time);
+        float eveningness = (time>0.5)?(frx_smootherstep(0.58, 0.5, time)):frx_smootherstep(0.25, 0.5, time);
+        // TODO: deal with z faces and diagonal faces as well
+        float angularSunInfluence = fragData.light.y*frx_smootherstep(-1.0, 1.0, n.x * morningness + n.y * noonness * frx_ambientIntensity() + (-n.x * eveningness));
 
-    float influencedDiffuse = max(diffuse,mix(diffuse, angularSunInfluence, 0.5));
-    //vec4 darkenColor = lightCalc * aoFact * rgbWithAlpha(influencedDiffuse, 1);
-    vec4 darkenColorNoAO = lightCalc * rgbWithAlpha(influencedDiffuse, 1); // AO IS A BRO YOU DON'T MESS WITH IT >:(
-    float luminanceNoAO = frx_luminance(darkenColorNoAO.rgb);
-    float ambientDarkness = frx_smootherstep(AMBIENT_DARKNESS_CUTOFF, 0.0, luminanceNoAO)*ambientSkyInfluence;
-    float deepDarkness = frx_smootherstep(DEEP_DARKNESS_CUTOFF, 0.0, luminanceNoAO);
-    //float inverseAmbience = frx_smootherstep(1.0, 0.0, ambientSkyInfluence);
-    
-    float mtf = 1.0-(1.0-0.96)*MORNING_TWILIGHT; //morning twilight factor
-    float twilightness = (time>0.5)?(max(morningness*mtf,eveningness)):frx_smootherstep(0.96, 1.0, max(morningness*mtf,eveningness));
-    float twilightLumination = angularSunInfluence*twilightness;
-    float twilightAmbient = twilightness*ambientDarkness;
-    
-    float dayness = (time < 0.5)?(1-twilightness):0;
-    float dayAmbient = dayness*ambientDarkness;
-    float nightAmbient = (1-dayness)*ambientDarkness/frx_ambientIntensity();
-    
-    float sunExposure = 1-ANGULAR_DELUMINATION+angularSunInfluence*ANGULAR_DELUMINATION+angularSunInfluence*SUN_EXPOSURE_POWER;
-    vec4 brightenColor = rgbWithAlpha(sunExposure, 1);
+        float influencedDiffuse = max(diffuse,mix(diffuse, angularSunInfluence, 0.5));
+        //vec4 darkenColor = lightCalc * aoFact * rgbWithAlpha(influencedDiffuse, 1);
+        darkenColorNoAO = lightCalc * rgbWithAlpha(influencedDiffuse, 1); // AO IS A BRO YOU DON'T MESS WITH IT >:(
+        float luminanceNoAO = frx_luminance(darkenColorNoAO.rgb);
+        float ambientDarkness = frx_smootherstep(AMBIENT_DARKNESS_CUTOFF, 0.0, luminanceNoAO)*ambientSkyInfluence;
+        float deepDarkness = frx_smootherstep(DEEP_DARKNESS_CUTOFF, 0.0, luminanceNoAO);
+        //float inverseAmbience = frx_smootherstep(1.0, 0.0, ambientSkyInfluence);
+        
+        float mtf = 1.0-(1.0-0.96)*MORNING_TWILIGHT; //morning twilight factor
+        float twilightness = (time>0.5)?(max(morningness*mtf,eveningness)):frx_smootherstep(0.96, 1.0, max(morningness*mtf,eveningness));
+        float twilightLumination = angularSunInfluence*twilightness;
+        float twilightAmbient = twilightness*ambientDarkness;
+        
+        float dayness = (time < 0.5)?(1-twilightness):0;
+        float dayAmbient = dayness*ambientDarkness;
+        float nightAmbient = (1-dayness)*ambientDarkness/frx_ambientIntensity();
+        
+        float sunExposure = 1-ANGULAR_DELUMINATION+angularSunInfluence*ANGULAR_DELUMINATION+angularSunInfluence*SUN_EXPOSURE_POWER;
+        vec4 brightenColor = rgbWithAlpha(sunExposure, 1);
 
-    darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, SUN_COLOR, angularSunInfluence * frx_ambientIntensity()), 1);
-    darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, TWILIGHT_COLOR, twilightAmbient), 1);
-    darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, DAY_AMBIENCE_COLOR, dayAmbient), 1);
-    darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, NIGHT_AMBIENCE_COLOR, nightAmbient), 1);
+        darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, SUN_COLOR, angularSunInfluence * frx_ambientIntensity()), 1);
+        darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, TWILIGHT_COLOR, twilightAmbient), 1);
+        darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, DAY_AMBIENCE_COLOR, dayAmbient), 1);
+        darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, NIGHT_AMBIENCE_COLOR, nightAmbient), 1);
 
-    brightenColor = vec4(mix(brightenColor.rgb, TWILIGHT_COLOR, twilightLumination), 1);
+        brightenColor = vec4(mix(brightenColor.rgb, TWILIGHT_COLOR, twilightLumination), 1);
 
-    a *= brightenColor;
+        a *= brightenColor;
+    } else {
+        darkenColorNoAO = lightCalc * rgbWithAlpha(diffuse, 1);
+    }
 	a *= darkenColorNoAO;
     a *= aoFact;
     //a *= vec4(1+sunExposure+twilightLumination, 1+sunExposure, 1+sunExposure, 1);
