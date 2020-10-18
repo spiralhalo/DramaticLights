@@ -5,7 +5,7 @@
 #define TWILIGHT_HAZE_EMISSIVITY    0.8
 #define MORNING_TWILIGHT            0.5
 #define AMBIENT_DARKNESS_CUTOFF     0.8
-#define DEEP_DARKNESS_CUTOFF        0.5
+//#define DEEP_DARKNESS_CUTOFF        0.5
 
 #define SUN_COLOR                   vec3(1.0, 1.0, 1.0)
 #define TWILIGHT_COLOR              vec3(1.0, 0.74, 0.18)
@@ -47,8 +47,8 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         //vec4 darkenColor = lightCalc * aoFact * rgbWithAlpha(influencedDiffuse, 1);
         darkenColorNoAO = lightCalc * rgbWithAlpha(influencedDiffuse, 1); // AO IS A BRO YOU DON'T MESS WITH IT >:(
         float luminanceNoAO = frx_luminance(darkenColorNoAO.rgb);
-        float ambientDarkness = frx_smootherstep(AMBIENT_DARKNESS_CUTOFF, 0.0, luminanceNoAO)*ambientSkyInfluence;
-        float deepDarkness = frx_smootherstep(DEEP_DARKNESS_CUTOFF, 0.0, luminanceNoAO);
+        float ambientDarkness = sqrt(frx_smootherstep(AMBIENT_DARKNESS_CUTOFF, 0.0, luminanceNoAO)*ambientSkyInfluence);
+        //float deepDarkness = frx_smootherstep(DEEP_DARKNESS_CUTOFF, 0.0, luminanceNoAO);
         //float inverseAmbience = frx_smootherstep(1.0, 0.0, ambientSkyInfluence);
         
         float mtf = 1.0-(1.0-0.96)*MORNING_TWILIGHT; //morning twilight factor
