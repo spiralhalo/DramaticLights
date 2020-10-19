@@ -5,12 +5,12 @@
 #define TWILIGHT_HAZE_EMISSIVITY    0.8
 #define MORNING_TWILIGHT            0.5
 #define AMBIENT_DARKNESS_CUTOFF     0.8
-//#define DEEP_DARKNESS_CUTOFF        0.5
+#define DEEP_DARKNESS_CUTOFF        0.5
 
 #define SUN_COLOR                   vec3(1.0, 1.0, 1.0)
 #define TWILIGHT_COLOR              vec3(1.0, 0.64, 0.18)
 #define DAY_AMBIENCE_COLOR          vec3(0.28, 0.89, 1.0)
-#define NIGHT_AMBIENCE_COLOR        vec3(0.16, 0.16, 0.48)
+#define NIGHT_AMBIENCE_COLOR        vec3(0.20, 0.20, 0.60)
 
 vec4 rgbWithAlpha(float x, float a){
     return vec4(x, x, x, a);
@@ -46,7 +46,7 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         float luminanceNoAO = frx_luminance(darkenColorNoAO.rgb);
         float ambientDarkness = frx_smootherstep(AMBIENT_DARKNESS_CUTOFF, 0.0, luminanceNoAO)*ambientSkyInfluence;
         float sqrtAmbientDarkness = sqrt(ambientDarkness);
-        //float deepDarkness = frx_smootherstep(DEEP_DARKNESS_CUTOFF, 0.0, luminanceNoAO);
+        float deepDarkness = frx_smootherstep(DEEP_DARKNESS_CUTOFF, 0.0, luminanceNoAO);
         //float inverseAmbience = frx_smootherstep(1.0, 0.0, ambientSkyInfluence);
         
         float mtf = 1.0-(1.0-0.96)*MORNING_TWILIGHT; //morning twilight factor
@@ -56,7 +56,7 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         
         float dayness = (time < 0.5)?(1-twilightness):0;
         float dayAmbience = dayness*sqrtAmbientDarkness;
-        float nightAmbience = (1-dayness)*ambientDarkness/frx_ambientIntensity();
+        float nightAmbience = (1-dayness)*deepDarkness*fragData.light.y;
         
         float sunExposure = 1-ANGULAR_DELUMINATION+angularSunInfluence*ANGULAR_DELUMINATION+angularSunInfluence*SUN_EXPOSURE_POWER;
         float sunHaze = frx_smootherstep(SUN_HAZE_CUTOFF, 1.0, angularSunInfluence);
