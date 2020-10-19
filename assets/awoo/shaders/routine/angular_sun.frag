@@ -41,9 +41,8 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         // TODO: deal with z axes? (annual sun "movement")
         float angularSunInfluence = fragData.light.y*frx_smootherstep(0.0, 1.0, east * morningness + top * noonness * frx_ambientIntensity() + west * eveningness);
 
-        //removed this part because mixing with sun color does the same thing and the logic was pretty smooth brain
-        //float influencedDiffuse = max(diffuse,mix(diffuse, angularSunInfluence, 0.5));
-        darkenColorNoAO = lightCalc * rgbWithAlpha(diffuse, 1); // AO IS A BRO YOU DON'T MESS WITH IT >:(
+        float sunBleachedDiffuse = mix(diffuse, 1.0, angularSunInfluence);
+        darkenColorNoAO = lightCalc * rgbWithAlpha(sunBleachedDiffuse, 1); // AO IS A BRO YOU DON'T MESS WITH IT >:(
         float luminanceNoAO = frx_luminance(darkenColorNoAO.rgb);
         float ambientDarkness = frx_smootherstep(AMBIENT_DARKNESS_CUTOFF, 0.0, luminanceNoAO)*ambientSkyInfluence;
         float sqrtAmbientDarkness = sqrt(ambientDarkness);
@@ -64,7 +63,7 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         float sunHazeEmissivity = sunHaze * noonness * NOON_HAZE_EMISSIVITY + sunHaze * twilightness * TWILIGHT_HAZE_EMISSIVITY;
         vec4 brightenColor = rgbWithAlpha(sunExposure, 1);
 
-        darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, SUN_COLOR, angularSunInfluence * frx_ambientIntensity()), 1);
+        darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, SUN_COLOR, angularSunInfluence), 1);
         darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, TWILIGHT_COLOR, twilightAmbience), 1);
         darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, DAY_AMBIENCE_COLOR, dayAmbience), 1);
         darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, NIGHT_AMBIENCE_COLOR, nightAmbience), 1);
