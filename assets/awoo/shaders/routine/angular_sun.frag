@@ -41,8 +41,9 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         // TODO: deal with z axes? (annual sun "movement")
         float angularSunInfluence = fragData.light.y*frx_smootherstep(0.0, 1.0, east * morningness + top * noonness * frx_ambientIntensity() + west * eveningness);
 
-        float influencedDiffuse = max(diffuse,mix(diffuse, angularSunInfluence, 0.5));
-        darkenColorNoAO = lightCalc * rgbWithAlpha(influencedDiffuse, 1); // AO IS A BRO YOU DON'T MESS WITH IT >:(
+        //removed this part because mixing with sun color does the same thing and the logic was pretty smooth brain
+        //float influencedDiffuse = max(diffuse,mix(diffuse, angularSunInfluence, 0.5));
+        darkenColorNoAO = lightCalc * rgbWithAlpha(diffuse, 1); // AO IS A BRO YOU DON'T MESS WITH IT >:(
         float luminanceNoAO = frx_luminance(darkenColorNoAO.rgb);
         float ambientDarkness = frx_smootherstep(AMBIENT_DARKNESS_CUTOFF, 0.0, luminanceNoAO)*ambientSkyInfluence;
         float sqrtAmbientDarkness = sqrt(ambientDarkness);
