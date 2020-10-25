@@ -13,10 +13,10 @@
 
 #include canvas:apitarget
 
-/****** awoo edit *****/
+/****** spiralhalo's edit *****/
 #include awoo:shaders/routine/hazy.frag
 #include awoo:shaders/routine/angular_sun.frag
-/****** END awoo edit *****/ 
+/****** END spiralhalo's edit *****/ 
 
 /******************************************************
   canvas:shaders/internal/vanilla/vanilla.frag
@@ -75,9 +75,9 @@ void main() {
 
 	frx_startFragment(fragData);
 	
-	/****** awoo edit *****/
+	/****** spiralhalo's edit *****/
 	awoo_hazy(fragData);
-	/****** END awoo edit *****/ 
+	/****** END spiralhalo's edit *****/ 
 
 	vec4 raw = fragData.spriteColor * fragData.vertexColor;
 	vec4 a = raw;
@@ -90,7 +90,7 @@ void main() {
 
 	if (a.a >= 0.5 || _cv_getFlag(_CV_FLAG_CUTOUT) != 1.0) {
 	
-		/****** awoo edit *****/ 
+		/****** spiralhalo's edit *****/ 
 		vec4 lightCalc = mix(light(fragData), frx_emissiveColor(), fragData.emissivity);
 
 		#if AO_SHADING_MODE != AO_MODE_NONE && defined(CONTEXT_IS_BLOCK)
@@ -121,7 +121,7 @@ void main() {
 		}
 		#endif
 		*/
-		/****** END awoo edit *****/ 
+		/****** END spiralhalo's edit *****/ 
 	} else {
 		discard;
 	}

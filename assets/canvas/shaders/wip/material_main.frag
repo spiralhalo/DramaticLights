@@ -14,11 +14,11 @@
 
 #include canvas:apitarget
 
-/****** awoo edit *****/
+/****** spiralhalo's edit *****/
 #define EXPERIMENTAL_PIPELINE
 #include awoo:shaders/routine/hazy.frag
 #include awoo:shaders/routine/angular_sun.frag
-/****** END awoo edit *****/ 
+/****** END spiralhalo's edit *****/ 
 
 /******************************************************
   canvas:shaders/internal/material_main.frag
@@ -80,9 +80,9 @@ void main() {
 
 	_cv_startFragment(fragData);
 
-	/****** awoo edit *****/
+	/****** spiralhalo's edit *****/
 	awoo_hazy(fragData);
-	/****** END awoo edit *****/ 
+	/****** END spiralhalo's edit *****/ 
 
 	vec4 raw = fragData.spriteColor * fragData.vertexColor;
 	vec4 a = raw;
@@ -96,7 +96,7 @@ void main() {
 		}
 	}
 
-	/****** awoo edit *****/ 
+	/****** spiralhalo's edit *****/ 
 	vec4 lightCalc = mix(light(fragData), frx_emissiveColor(), fragData.emissivity);
 
 	#if AO_SHADING_MODE != AO_MODE_NONE
@@ -128,7 +128,7 @@ void main() {
 	}
 #endif
 */
-	/****** END awoo edit *****/ 
+	/****** END spiralhalo's edit *****/ 
 
 	// PERF: varyings better here?
 	if (_cv_getFlag(_CV_FLAG_FLASH_OVERLAY) == 1.0) {
