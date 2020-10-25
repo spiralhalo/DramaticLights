@@ -1,16 +1,16 @@
-#include canvas:shaders/wip/header.glsl
-#include canvas:shaders/wip/varying.glsl
-#include canvas:shaders/wip/diffuse.glsl
-#include canvas:shaders/wip/flags.glsl
-#include canvas:shaders/wip/fog.glsl
-#include frex:shaders/wip/api/world.glsl
-#include frex:shaders/wip/api/player.glsl
-#include frex:shaders/wip/api/material.glsl
-#include frex:shaders/wip/api/fragment.glsl
-#include frex:shaders/wip/api/sampler.glsl
+#include canvas:shaders/internal/header.glsl
+#include canvas:shaders/internal/varying.glsl
+#include canvas:shaders/internal/diffuse.glsl
+#include canvas:shaders/internal/flags.glsl
+#include canvas:shaders/internal/fog.glsl
+#include frex:shaders/api/world.glsl
+#include frex:shaders/api/player.glsl
+#include frex:shaders/api/material.glsl
+#include frex:shaders/api/fragment.glsl
+#include frex:shaders/api/sampler.glsl
 #include frex:shaders/lib/math.glsl
 #include frex:shaders/lib/color.glsl
-#include canvas:shaders/wip/program.glsl
+#include canvas:shaders/internal/program.glsl
 
 #include canvas:apitarget
 
@@ -112,22 +112,21 @@ void main() {
 	#endif
 	
 	awoo_angularSun(fragData, a, lightCalc, calcAO, calcDiff);
-	//a *= mix(light(fragData), frx_emissiveColor(), fragData.emissivity);
-/*
-#if AO_SHADING_MODE != AO_MODE_NONE
-	if (fragData.ao) {
-		a *= aoFactor(fragData.light);
-	}
-#endif
+// 	a *= mix(light(fragData), frx_emissiveColor(), fragData.emissivity);
 
-#if DIFFUSE_SHADING_MODE == DIFFUSE_MODE_NORMAL
-	if (fragData.diffuse) {
-		float df = _cvv_diffuse + (1.0 - _cvv_diffuse) * fragData.emissivity;
+// #if AO_SHADING_MODE != AO_MODE_NONE
+// 	if (fragData.ao) {
+// 		a *= aoFactor(fragData.light);
+// 	}
+// #endif
 
-		a *= vec4(df, df, df, 1.0);
-	}
-#endif
-*/
+// #if DIFFUSE_SHADING_MODE == DIFFUSE_MODE_NORMAL
+// 	if (fragData.diffuse) {
+// 		float df = _cvv_diffuse + (1.0 - _cvv_diffuse) * fragData.emissivity;
+
+// 		a *= vec4(df, df, df, 1.0);
+// 	}
+// #endif
 	/****** END awoo edit *****/ 
 
 	// PERF: varyings better here?
