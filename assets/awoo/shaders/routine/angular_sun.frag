@@ -67,7 +67,7 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         float twilightAmbience = twilightness*ambientDarkness*fixedSkyLight;
         
         float dayness = (time < 0.5)?(1-twilightness):0;
-        float dayAmbience = dayness*ambientDarkness*ambientIntensity;
+        float dayAmbience = dayness*ambientDarkness*ambientSkyInfluence;
         float nightAmbience = (1-dayness)*deepDarkness*fixedSkyLight;
         
         float sunExposure = 1-ANGULAR_DELUMINATION+angularSunInfluence*ANGULAR_DELUMINATION+angularSunInfluence*SUN_EXPOSURE_POWER;
