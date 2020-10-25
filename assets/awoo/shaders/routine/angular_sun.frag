@@ -26,8 +26,7 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
 
     vec4 darkenColorNoAO;
     if(frx_worldHasSkylight() && fragData.emissivity == 0){
-        float fixedSkyLight = clampScale(MIN_SKY_LIGHT, 1.0, fragData.light.y);
-        float ambientSkyInfluence = fixedSkyLight * frx_ambientIntensity();
+
         vec3 n = fragData.vertexNormal;
         #ifdef EXPERIMENTAL_PIPELINE
         n = n*frx_normalModelMatrix();
@@ -41,28 +40,34 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         float bottom = dot(n, vec3(0,-1,0));
         //color the corresponding face
         a *= vec4(east+bottom+north, top+north+west, west+bottom+south, 1);*/
+
         float time = frx_worldTime();
         float noonness = (time<0.25)?(frx_smootherstep(0.0, 0.25, time)):(frx_smootherstep(0.5, 0.25, time));
         float morningness = (time>0.92)?(frx_smootherstep(0.92, 1.0, time)):frx_smootherstep(0.25, 0.0, time);
         float eveningness = (time>0.5)?(frx_smootherstep(0.58, 0.5, time)):frx_smootherstep(0.25, 0.5, time);
+
+        float fixedSkyLight = clampScale(MIN_SKY_LIGHT, 1.0, fragData.light.y);
+        float ambientIntensity = frx_ambientIntensity();
+        float ambientSkyInfluence = fixedSkyLight * ambientIntensity;
+        float weatherClearness = mix(1.0, ambientIntensity, frx_rainGradient());
+
         // TODO: deal with z axes? (annual sun "movement")
-        float angularSunInfluence = fixedSkyLight*frx_smootherstep(0.0, 1.0, east * morningness + top * noonness * frx_ambientIntensity() + west * eveningness);
+        float angularSunInfluence = fixedSkyLight*weatherClearness*frx_smootherstep(0.0, 1.0, east * morningness + top * noonness + west * eveningness);
 
         float sunBleachedDiffuse = mix(diffuse, 1.0, angularSunInfluence);
         darkenColorNoAO = lightCalc * rgbWithAlpha(sunBleachedDiffuse, 1); // AO IS A BRO YOU DON'T MESS WITH IT >:(
         float luminanceNoAO = frx_luminance(darkenColorNoAO.rgb);
-        float ambientDarkness = frx_smootherstep(AMBIENT_DARKNESS_CUTOFF, 0.0, luminanceNoAO)*ambientSkyInfluence;
-        float sqrtAmbientDarkness = sqrt(ambientDarkness);
+        float ambientDarkness = sqrt(frx_smootherstep(AMBIENT_DARKNESS_CUTOFF, 0.0, luminanceNoAO))*weatherClearness;
         float deepDarkness = frx_smootherstep(DEEP_DARKNESS_CUTOFF, 0.0, luminanceNoAO);
         //float inverseAmbience = frx_smootherstep(1.0, 0.0, ambientSkyInfluence);
         
         float mtf = morningness>0?MORNING_TWILIGHT:1; //morning twilight factor
         float twilightness = (time>0.5?max(morningness,eveningness):frx_smootherstep(0.96, 1.0, max(morningness,eveningness)))*mtf;
         float twilightLumination = angularSunInfluence*twilightness;
-        float twilightAmbience = twilightness*sqrtAmbientDarkness;
+        float twilightAmbience = twilightness*ambientDarkness*fixedSkyLight;
         
         float dayness = (time < 0.5)?(1-twilightness):0;
-        float dayAmbience = dayness*sqrtAmbientDarkness;
+        float dayAmbience = dayness*ambientDarkness*ambientIntensity;
         float nightAmbience = (1-dayness)*deepDarkness*fixedSkyLight;
         
         float sunExposure = 1-ANGULAR_DELUMINATION+angularSunInfluence*ANGULAR_DELUMINATION+angularSunInfluence*SUN_EXPOSURE_POWER;
