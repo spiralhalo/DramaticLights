@@ -25,7 +25,7 @@ vec4 rgbWithAlpha(float x, float a){
 void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCalc, vec4 aoFact, float diffuse) {
 
     vec4 darkenColorNoAO;
-    if(frx_worldHasSkylight() && fragData.emissivity == 0){
+    if(frx_worldHasSkylight()){
 
         vec3 n = fragData.vertexNormal;
         #ifdef EXPERIMENTAL_PIPELINE
