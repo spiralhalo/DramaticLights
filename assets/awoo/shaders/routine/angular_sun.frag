@@ -32,6 +32,10 @@
 #define DAY_AMBIENCE_COLOR          vec3(0.28, 0.89, 1.0)
 #define NIGHT_AMBIENCE_COLOR        vec3(0.10, 0.10, 0.20)
 
+// Linear "step"
+// For sky detection it makes sure that some ambient light seep into caves.
+// For time transition (dawn -> morning -> noon, etc) it has weaker peaks,
+// so smootherstep is the better choice.
 float clampScale(float e0, float e1, float v){
     return clamp((v-e0)/(e1-e0), 0.0, 1.0);
 }
@@ -81,8 +85,8 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         
         float mtf = morningness>0?MORNING_TWILIGHT:1; //morning twilight factor
         float twilightness = (time>0.5?max(morningness,eveningness):frx_smootherstep(0.96, 1.0, max(morningness,eveningness)))*mtf;
-        float twilightLumination = angularSunInfluence*twilightness;
-        float twilightAmbience = twilightness*ambientDarkness*fixedSkyLight;
+        float twilightLumination = angularSunInfluence*twilightness*0.5;
+        float twilightAmbience = twilightness*fixedSkyLight;
         
         float dayness = (time < 0.5)?(1-twilightness):0;
         float dayAmbience = dayness*ambientDarkness*ambientSkyInfluence;
