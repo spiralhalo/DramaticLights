@@ -30,6 +30,7 @@
 #define SUN_COLOR                   vec3(1.0, 1.0, 1.0)
 #define TWILIGHT_COLOR              vec3(1.0, 0.5, 0.18)
 #define DAY_AMBIENCE_COLOR          vec3(0.28, 0.89, 1.0)
+#define DAY_FOG_COLOR               vec3(0.5, 0.77, 1.0)
 #define NIGHT_AMBIENCE_COLOR        vec3(0.10, 0.10, 0.20)
 
 #define FOG_NEAR                    128
@@ -114,9 +115,9 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         a *= aoFact;
 
         float fogness = frx_smootherstep(FOG_NEAR, FOG_FAR, length(_awoov_viewPos.xz));
-        vec3 fogColor = DAY_AMBIENCE_COLOR;
+        vec3 fogColor = DAY_FOG_COLOR;
         fogColor = mix(fogColor, TWILIGHT_COLOR, twilightness);
-        fogColor = mix(fogColor, NIGHT_AMBIENCE_COLOR, (1-dayness));
+        fogColor = mix(fogColor, NIGHT_AMBIENCE_COLOR, max(0,1-dayness-twilightness));
         a = mix(a, vec4(fogColor, 1.0), fogness);
 
         fragData.emissivity = max(fragData.emissivity, max(0,sunHazeEmissivity-fogness));
