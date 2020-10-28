@@ -32,6 +32,11 @@
 #define DAY_AMBIENCE_COLOR          vec3(0.28, 0.89, 1.0)
 #define NIGHT_AMBIENCE_COLOR        vec3(0.10, 0.10, 0.20)
 
+#define FOG_NEAR                    128
+#define FOG_FAR                     512
+
+varying vec3 _awoov_viewPos;
+
 // Linear "step"
 // For sky detection it makes sure that some ambient light seep into caves.
 // For time transition (dawn -> morning -> noon, etc) it has weaker peaks,
@@ -97,18 +102,27 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         float sunHazeEmissivity = sunHaze * noonness * NOON_HAZE_EMISSIVITY + sunHaze * twilightness * TWILIGHT_HAZE_EMISSIVITY;
         vec4 brightenColor = rgbWithAlpha(sunExposure, 1);
 
-        darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, SUN_COLOR, angularSunInfluence), 1);
-        darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, TWILIGHT_COLOR, twilightAmbience), 1);
-        darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, DAY_AMBIENCE_COLOR, dayAmbience), 1);
-        darkenColorNoAO = vec4(mix(darkenColorNoAO.rgb, NIGHT_AMBIENCE_COLOR, nightAmbience), 1);
+        darkenColorNoAO.rgb = mix(darkenColorNoAO.rgb, SUN_COLOR, angularSunInfluence);
+        darkenColorNoAO.rgb = mix(darkenColorNoAO.rgb, TWILIGHT_COLOR, twilightAmbience);
+        darkenColorNoAO.rgb = mix(darkenColorNoAO.rgb, DAY_AMBIENCE_COLOR, dayAmbience);
+        darkenColorNoAO.rgb = mix(darkenColorNoAO.rgb, NIGHT_AMBIENCE_COLOR, nightAmbience);
 
         brightenColor = vec4(mix(brightenColor.rgb, TWILIGHT_COLOR, twilightLumination), 1);
 
         a *= brightenColor;
-        fragData.emissivity = max(fragData.emissivity, sunHazeEmissivity);
+        a *= darkenColorNoAO;
+        a *= aoFact;
+
+        float fogness = frx_smootherstep(FOG_NEAR, FOG_FAR, length(_awoov_viewPos.xz));
+        vec3 fogColor = DAY_AMBIENCE_COLOR;
+        fogColor = mix(fogColor, TWILIGHT_COLOR, twilightness);
+        fogColor = mix(fogColor, NIGHT_AMBIENCE_COLOR, (1-dayness));
+        a = mix(a, vec4(fogColor, 1.0), fogness);
+
+        fragData.emissivity = max(fragData.emissivity, max(0,sunHazeEmissivity-fogness));
     } else {
         darkenColorNoAO = lightCalc * rgbWithAlpha(diffuse, 1);
+        a *= darkenColorNoAO;
+        a *= aoFact;
     }
-	a *= darkenColorNoAO;
-    a *= aoFact;
 }
