@@ -16,6 +16,8 @@
 
 /****** spiralhalo's edit *****/
 #define EXPERIMENTAL_PIPELINE
+#include awoo:settings.glsl
+#include awoo:shaders/common.frag
 #include awoo:shaders/routine/hazy.frag
 #include awoo:shaders/routine/angular_sun.frag
 /****** END spiralhalo's edit *****/ 

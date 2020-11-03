@@ -14,6 +14,8 @@
 #include canvas:apitarget
 
 /****** spiralhalo's edit *****/
+#include awoo:settings.glsl
+#include awoo:shaders/common.frag
 #include awoo:shaders/routine/hazy.frag
 #include awoo:shaders/routine/angular_sun.frag
 /****** END spiralhalo's edit *****/ 

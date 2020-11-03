@@ -12,6 +12,11 @@
     // Setting FOG_FAR to be greater than render distance weakens the maximum fog density.
     #define FOG_FAR                     512
 
+// BLOOM SETTINGS
+
+
+    // Emissivity strength of block-lit objects. Also affected by Canvas bloom settings (default: 1.0)
+    #define BLOCK_LIGHT_HAZE            1.0
 
 // COLOR SETTINGS
 

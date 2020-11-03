@@ -16,25 +16,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include awoo:settings.glsl
-
-// Magic number
-#define MIN_SKY_LIGHT               0.03125
-
-varying vec3 _awoov_viewPos;
-
-// Linear "step"
-// For sky detection it makes sure that some ambient light seep into caves.
-// For time transition (dawn -> morning -> noon, etc) it has weaker peaks,
-// so smootherstep is the better choice.
-float clampScale(float e0, float e1, float v){
-    return clamp((v-e0)/(e1-e0), 0.0, 1.0);
-}
-
-vec4 rgbWithAlpha(float x, float a){
-    return vec4(x, x, x, a);
-}
-
 void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCalc, vec4 aoFact, float diffuse) {
 
     if(frx_worldHasSkylight()){
