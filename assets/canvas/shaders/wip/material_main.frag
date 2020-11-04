@@ -18,6 +18,7 @@
 #define EXPERIMENTAL_PIPELINE
 #include awoo:settings.glsl
 #include awoo:shaders/common.frag
+#include awoo:shaders/routine/diffuse.frag
 #include awoo:shaders/routine/hazy.frag
 #include awoo:shaders/routine/angular_sun.frag
 /****** END spiralhalo's edit *****/ 
@@ -57,17 +58,17 @@ vec4 aoFactor(vec2 lightCoord) {
 }
 #endif
 
-vec4 light(frx_FragmentData fragData) {
-#if DIFFUSE_SHADING_MODE == DIFFUSE_MODE_SKY_ONLY
-	if (fragData.diffuse) {
-		vec4 block = texture2D(frxs_lightmap, vec2(fragData.light.x, 0.03125));
-		vec4 sky = texture2D(frxs_lightmap, vec2(0.03125, fragData.light.y));
-		return max(block, sky * _cvv_diffuse);
-	}
-#endif
+// vec4 light(frx_FragmentData fragData) {
+// #if DIFFUSE_SHADING_MODE == DIFFUSE_MODE_SKY_ONLY
+// 	if (fragData.diffuse) {
+// 		vec4 block = texture2D(frxs_lightmap, vec2(fragData.light.x, 0.03125));
+// 		vec4 sky = texture2D(frxs_lightmap, vec2(0.03125, fragData.light.y));
+// 		return max(block, sky * _cvv_diffuse);
+// 	}
+// #endif
 
-	return texture2D(frxs_lightmap, fragData.light);
-}
+// 	return texture2D(frxs_lightmap, fragData.light);
+// }
 
 void main() {
 	frx_FragmentData fragData = frx_FragmentData (
@@ -99,7 +100,7 @@ void main() {
 	}
 
 	/****** spiralhalo's edit *****/ 
-	vec4 lightCalc = light(fragData);
+	vec4 lightCalc = texture2D(frxs_lightmap, fragData.light);
 
 	#if AO_SHADING_MODE != AO_MODE_NONE
 	vec4 calcAO = fragData.ao?aoFactor(fragData.light):vec4(1,1,1,1);
@@ -107,8 +108,8 @@ void main() {
 	vec4 calcAO = vec4(1,1,1,1);
 	#endif
 	
-	#if DIFFUSE_SHADING_MODE == DIFFUSE_MODE_NORMAL
-	float calcDiff = fragData.diffuse?_cvv_diffuse:1;
+	#if DIFFUSE_SHADING_MODE != DIFFUSE_MODE_NONE
+	float calcDiff = awoo_diffuse(fragData);
 	#else
 	float calcDiff = 1;
 	#endif

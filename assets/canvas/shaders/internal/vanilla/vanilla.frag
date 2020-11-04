@@ -16,6 +16,7 @@
 /****** spiralhalo's edit *****/
 #include awoo:settings.glsl
 #include awoo:shaders/common.frag
+#include awoo:shaders/routine/diffuse.frag
 #include awoo:shaders/routine/hazy.frag
 #include awoo:shaders/routine/angular_sun.frag
 /****** END spiralhalo's edit *****/ 
@@ -48,21 +49,21 @@ vec4 aoFactor(vec2 lightCoord) {
 	#endif
 }
 
-vec4 light(frx_FragmentData fragData) {
-	#ifdef CONTEXT_IS_GUI
-	return vec4(1.0, 1.0, 1.0, 1.0);
-	#else
-	#if DIFFUSE_SHADING_MODE == DIFFUSE_MODE_SKY_ONLY && defined(CONTEXT_IS_BLOCK)
-	if (fragData.diffuse) {
-		vec4 block = texture2D(frxs_lightmap, vec2(fragData.light.x, 0.03125));
-		vec4 sky = texture2D(frxs_lightmap, vec2(0.03125, fragData.light.y));
-		return max(block, sky * _cvv_diffuse);
-	}
-		#endif
+// vec4 light(frx_FragmentData fragData) {
+// 	#ifdef CONTEXT_IS_GUI
+// 	return vec4(1.0, 1.0, 1.0, 1.0);
+// 	#else
+// 	#if DIFFUSE_SHADING_MODE == DIFFUSE_MODE_SKY_ONLY && defined(CONTEXT_IS_BLOCK)
+// 	if (fragData.diffuse) {
+// 		vec4 block = texture2D(frxs_lightmap, vec2(fragData.light.x, 0.03125));
+// 		vec4 sky = texture2D(frxs_lightmap, vec2(0.03125, fragData.light.y));
+// 		return max(block, sky * _cvv_diffuse);
+// 	}
+// 		#endif
 
-	return texture2D(frxs_lightmap, fragData.light);
-	#endif
-}
+// 	return texture2D(frxs_lightmap, fragData.light);
+// 	#endif
+// }
 
 void main() {
 	frx_FragmentData fragData = frx_FragmentData (
@@ -93,7 +94,7 @@ void main() {
 	if (a.a >= 0.5 || _cv_getFlag(_CV_FLAG_CUTOUT) != 1.0) {
 	
 		/****** spiralhalo's edit *****/ 
-		vec4 lightCalc = light(fragData);
+		vec4 lightCalc = texture2D(frxs_lightmap, fragData.light);
 
 		#if AO_SHADING_MODE != AO_MODE_NONE && defined(CONTEXT_IS_BLOCK)
 		vec4 calcAO = fragData.ao?aoFactor(fragData.light):vec4(1,1,1,1);
@@ -101,8 +102,8 @@ void main() {
 		vec4 calcAO = vec4(1,1,1,1);
 		#endif
 		
-		#if DIFFUSE_SHADING_MODE == DIFFUSE_MODE_NORMAL
-		float calcDiff = fragData.diffuse?_cvv_diffuse:1;
+		#if DIFFUSE_SHADING_MODE != DIFFUSE_MODE_NONE
+		float calcDiff = awoo_diffuse(fragData);
 		#else
 		float calcDiff = 1;
 		#endif
