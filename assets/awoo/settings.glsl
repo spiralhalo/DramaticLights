@@ -10,8 +10,8 @@
     // Color of sunlight (default: vec3(1.0, 1.0, 1.0) [= white])
     #define SUN_COLOR                   vec3(1.0, 1.0, 1.0)
 
-    // Color of dawn and dusk ambience (default: vec3(1.0, 0.5, 0.18) [= reddish orange])
-    #define TWILIGHT_COLOR              vec3(1.0, 0.5, 0.18)
+    // Color of dawn and dusk ambience (default: vec3(1.0, 0.6, 0.18) [= orange])
+    #define TWILIGHT_COLOR              vec3(1.0, 0.6, 0.18)
 
     // Color of day ambience (default: vec3(0.28, 0.89, 1.0) [= cyan])
     #define DAY_AMBIENCE_COLOR          vec3(0.28, 0.89, 1.0)
@@ -35,7 +35,7 @@
     // Amount of emissivity applied during noon (default: 0.05)
     #define NOON_HAZE_EMISSIVITY        0.05
 
-    // Amount of extra emissivity applied during dawn and dusk (default: 0.8)
+    // Amount of extra emissivity applied to east/west faces of objects during dawn/dusk (default: 0.8)
     #define TWILIGHT_HAZE_EMISSIVITY    0.8
 
     // Strengh of sunrise ambience. Sunset ambience is always at maximum strength (default: 0.6)

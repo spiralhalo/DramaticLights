@@ -54,8 +54,9 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         float deepDarkness = frx_smootherstep(DEEP_DARKNESS_CUTOFF, 0.0, luminanceNoAO);
         //float inverseAmbience = frx_smootherstep(1.0, 0.0, ambientSkyInfluence);
         
-        float mtf = morningness>0?MORNING_TWILIGHT:1; //morning twilight factor
-        float twilightness = (time>0.5?max(morningness,eveningness):frx_smootherstep(0.96, 1.0, max(morningness,eveningness)))*mtf;
+        float dawnness = time > 0.92 ? frx_smootherstep(0.92,1,time) : frx_smootherstep(0.04,0,time);
+        float duskness = time < 0.52 ? frx_smootherstep(0.48,0.52,time) : frx_smootherstep(0.58,0.52,time);
+        float twilightness = dawnness*MORNING_TWILIGHT + duskness;
         float twilightLumination = angularSunInfluence*twilightness*0.5;
         float twilightAmbience = twilightness*fixedSkyLight;
         
