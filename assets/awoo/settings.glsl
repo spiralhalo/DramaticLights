@@ -16,17 +16,15 @@
     // Color of day ambience (default: vec3(0.28, 0.89, 1.0) [= cyan])
     #define DAY_AMBIENCE_COLOR          vec3(0.28, 0.89, 1.0)
 
-    // Color of day fog (default: vec3(0.5, 0.77, 1.0) [= desaturated cyan])
-    #define DAY_FOG_COLOR               vec3(0.5, 0.77, 1.0)
-
-    // Color of day fog (default: vec3(0.10, 0.10, 0.20) [= dark blue])
+    // Color of night ambience (default: vec3(0.10, 0.10, 0.20) [= dark blue])
     #define NIGHT_AMBIENCE_COLOR        vec3(0.10, 0.10, 0.20)
 
+// INTENSITY SETTINGS
+
+    // Intensity of day ambience (default: 0.8)
+    #define DAY_AMBIENCE_INTENSITY      0.8
 
 // EXPERT MODE
-
-    // How much lack of sunlight may cause objects to appear darker (default: 0.2)
-    #define ANGULAR_DELUMINATION        0.2
 
     // How much may sunlight brighten a face (default: 0.1)
     #define SUN_EXPOSURE_POWER          0.1
