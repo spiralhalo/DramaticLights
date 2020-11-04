@@ -3,7 +3,7 @@
 // FOG SETTINGS
 
     // Extra ambient fog, separate from vanilla fog (default: true)
-    #define AMBIENT_FOG_ENABLED         true
+    // #define AMBIENT_FOG_ENABLED         true
 
     // Distance where fog starts (default: 128 [= 8 chunks])
     #define FOG_NEAR                    128
@@ -18,12 +18,20 @@
     // Emissivity strength of block-lit objects. Also affected by Canvas bloom settings (default: 1.0)
     #define BLOCK_LIGHT_HAZE            1.0
 
+// TWILIGHT INTENSITY SETTINGS
+
+    // Strength of the red tint during dawn/dusk (default: 1.0)
+    #define TWILIGHT_AMBIENT_INTENSITY  1.0
+
+    // Extra redness added to the east/west side of objects during dawn/dusk (default: 0.5)
+    #define TWILIGHT_LUMINATION         0.5
+
 // COLOR SETTINGS
 
     // Color of sunlight (default: vec3(1.0, 1.0, 1.0) [= white])
     #define SUN_COLOR                   vec3(1.0, 1.0, 1.0)
 
-    // Color of dawn and dusk ambience (default: vec3(1.0, 0.5, 0.18) [= reddish orange])
+    // Color of dawn/dusk ambience (default: vec3(1.0, 0.5, 0.18) [= reddish orange])
     #define TWILIGHT_COLOR              vec3(1.0, 0.5, 0.18)
 
     // Color of day ambience (default: vec3(0.28, 0.89, 1.0) [= cyan])
@@ -50,7 +58,7 @@
     // Amount of emissivity applied during noon (default: 0.05)
     #define NOON_HAZE_EMISSIVITY        0.05
 
-    // Amount of extra emissivity applied during dawn and dusk (default: 0.8)
+    // Amount of extra emissivity applied during dawn/dusk (default: 0.8)
     #define TWILIGHT_HAZE_EMISSIVITY    0.8
 
     // Strengh of sunrise ambience. Sunset ambience is always at maximum strength (default: 0.6)
