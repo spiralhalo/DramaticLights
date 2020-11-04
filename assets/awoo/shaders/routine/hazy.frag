@@ -19,7 +19,7 @@
 void awoo_hazy(inout frx_FragmentData fragData) {
 
 	// sky light intensity
-	float sky = clampScale(MIN_SKY_LIGHT, 1.0, fragData.light.y) * frx_ambientIntensity();
+	float sky = clampScale(MIN_VANILLA_LIGHT, 1.0, fragData.light.y) * frx_ambientIntensity();
 
 	// hazy "indoor" lighting effect
 	float hazy = BLOCK_LIGHT_HAZE * frx_smootherstep(0.5, 1, max(0, fragData.light.x - sky));

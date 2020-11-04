@@ -1,5 +1,5 @@
 // Magic number
-#define MIN_SKY_LIGHT               0.03125
+#define MIN_VANILLA_LIGHT   0.03125
 
 varying vec3 _awoov_worldPos;
 varying vec3 _awoov_viewPos;

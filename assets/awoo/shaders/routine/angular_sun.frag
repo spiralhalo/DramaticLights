@@ -36,18 +36,13 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         float east = dot(n, vec3(1,0,0));
         float top = dot(n, vec3(0,1,0));
         float west = dot(n, vec3(-1,0,0));
-        /*float south = dot(n, vec3(0,0,1));
-        float north = dot(n, vec3(0,0,-1));
-        float bottom = dot(n, vec3(0,-1,0));
-        //color the corresponding face
-        a *= vec4(east+bottom+north, top+north+west, west+bottom+south, 1);*/
 
         float time = frx_worldTime();
         float noonness = (time<0.25)?(frx_smootherstep(0.0, 0.25, time)):(frx_smootherstep(0.5, 0.25, time));
         float morningness = (time>0.92)?(frx_smootherstep(0.92, 1.0, time)):frx_smootherstep(0.25, 0.0, time);
         float eveningness = (time>0.5)?(frx_smootherstep(0.58, 0.5, time)):frx_smootherstep(0.25, 0.5, time);
 
-        float fixedSkyLight = clampScale(MIN_SKY_LIGHT, 1.0, fragData.light.y);
+        float fixedSkyLight = clampScale(MIN_VANILLA_LIGHT, 1.0, fragData.light.y);
         float ambientIntensity = frx_ambientIntensity();
         float ambientSkyInfluence = fixedSkyLight * ambientIntensity;
         float weatherClearness = mix(1.0, ambientIntensity, frx_rainGradient());
@@ -72,10 +67,10 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         float dayAmbience = dayness*ambientDarkness*ambientSkyInfluence;
         float nightAmbience = (1-dayness)*deepDarkness*fixedSkyLight;
         
-        float sunExposure = 1+angularSunInfluence*SUN_EXPOSURE_POWER;
+        float sunExposure = angularSunInfluence*SUN_EXPOSURE_POWER;
         float sunHaze = frx_smootherstep(SUN_HAZE_CUTOFF, 1.0, angularSunInfluence);
         float sunHazeEmissivity = sunHaze * noonness * NOON_HAZE_EMISSIVITY + sunHaze * twilightness * TWILIGHT_HAZE_EMISSIVITY;
-        vec3 sunExposureColor = vec3(sunExposure);
+        vec3 sunExposureColor = vec3(1+sunExposure);
 
         darkenColorNoAO = mix(darkenColorNoAO, SUN_COLOR, angularSunInfluence);
         darkenColorNoAO = mix(darkenColorNoAO, TWILIGHT_COLOR, twilightAmbience);
@@ -83,7 +78,7 @@ void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCa
         darkenColorNoAO = mix(darkenColorNoAO, NIGHT_AMBIENCE_COLOR, nightAmbience);
         darkenColorNoAO = mix(darkenColorNoAO, frx_emissiveColor().rgb, fragData.emissivity);
 
-        sunExposureColor = mix(sunExposureColor, TWILIGHT_COLOR, twilightLumination);
+        sunExposureColor = mix(sunExposureColor, vec3(0.5)+TWILIGHT_COLOR, twilightLumination);
         sunExposureColor = mix(sunExposureColor, frx_emissiveColor().rgb, fragData.emissivity);
 
         a *= vec4(sunExposureColor, 1.0);
