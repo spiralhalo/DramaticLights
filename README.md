@@ -8,10 +8,12 @@ A lighting effect shader for [Canvas](https://github.com/grondag/canvas) rendere
 4. Hazy effect on block-lit indoor objects.
 
 ## `settings.glsl`
-Enable or disable fog by changing the value of `AMBIENT_FOG_ENABLED`.
+~Enable or disable fog by changing the value of `AMBIENT_FOG_ENABLED`.~
+
+Custom fog is removed for now because it looks inconsistent with vanilla sky.
 
 Changing settings requires render reload, typically triggered by resource reloading. There is no GUI for changing settings at the moment.
 
-Current version is made to work with Canvas 1.0.1027.
+Current version is made to work with Canvas version 1.0.1027 to 1.0.1095-snapshot.
 
 For testing only, but you can play normally with it if you know what you're doing.
