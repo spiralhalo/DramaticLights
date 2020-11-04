@@ -16,6 +16,14 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#define SUN_EXPOSURE_POWER          0.1
+#define SUN_HAZE_CUTOFF             0.9
+#define NOON_HAZE_EMISSIVITY        0.05
+#define TWILIGHT_HAZE_EMISSIVITY    0.8
+#define MORNING_TWILIGHT            0.6
+#define AMBIENT_DARKNESS_CUTOFF     0.8
+#define DEEP_DARKNESS_CUTOFF        0.5
+
 void awoo_angularSun(inout frx_FragmentData fragData, inout vec4 a, vec4 lightCalc, vec4 aoFact, float diffuse) {
 
     if(frx_worldHasSkylight()){
