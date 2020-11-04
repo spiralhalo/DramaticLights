@@ -1,19 +1,6 @@
 // SETTINGS (Requires resource reload)
 
-// FOG SETTINGS
-
-    // Extra ambient fog, separate from vanilla fog (default: true)
-    #define AMBIENT_FOG_ENABLED         true
-
-    // Distance where fog starts (default: 128 [= 8 chunks])
-    #define FOG_NEAR                    128
-
-    // Distance where fog is at maximum density (default: 512 [= 32 chunks])
-    // Setting FOG_FAR to be greater than render distance weakens the maximum fog density.
-    #define FOG_FAR                     512
-
 // BLOOM SETTINGS
-
 
     // Emissivity strength of block-lit objects. Also affected by Canvas bloom settings (default: 1.0)
     #define BLOCK_LIGHT_HAZE            1.0
