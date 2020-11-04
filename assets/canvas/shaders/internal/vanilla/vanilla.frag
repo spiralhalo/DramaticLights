@@ -93,16 +93,16 @@ void main() {
 	if (a.a >= 0.5 || _cv_getFlag(_CV_FLAG_CUTOUT) != 1.0) {
 	
 		/****** spiralhalo's edit *****/ 
-		vec4 lightCalc = mix(light(fragData), frx_emissiveColor(), fragData.emissivity);
+		vec4 lightCalc = light(fragData);
 
 		#if AO_SHADING_MODE != AO_MODE_NONE && defined(CONTEXT_IS_BLOCK)
-		vec4 calcAO = fragData.ao?(aoFactor(fragData.light)):vec4(1,1,1,1);
+		vec4 calcAO = fragData.ao?aoFactor(fragData.light):vec4(1,1,1,1);
 		#else
 		vec4 calcAO = vec4(1,1,1,1);
 		#endif
 		
 		#if DIFFUSE_SHADING_MODE == DIFFUSE_MODE_NORMAL
-		float calcDiff = fragData.diffuse?(_cvv_diffuse + (1.0 - _cvv_diffuse) * fragData.emissivity):1;
+		float calcDiff = fragData.diffuse?_cvv_diffuse:1;
 		#else
 		float calcDiff = 1;
 		#endif
