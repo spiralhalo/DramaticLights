@@ -1,6 +1,8 @@
 # Dramatic Lights
 A lighting effect shader for [Canvas](https://github.com/grondag/canvas) renderer (a fabric minecraft mod).
 
+Development has been discontinued in favor of [Lumi Lights](https://github.com/spiralhalo/LumiLights).
+
 ## Features
 1. Dawn and dusk "twilight" efect.
 2. Directional sunlight on blocks (and entities with experimental pipeline enabled).
